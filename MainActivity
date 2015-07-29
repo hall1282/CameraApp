@@ -1,0 +1,61 @@
+import java.io.IOException;
+
+import android.app.Activity;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.os.Bundle;
+import android.provider.MediaStore;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
+import android.widget.ImageView;
+
+public class MainActivity extends Activity implements OnClickListener {
+
+	ImageView picture;
+	Button cameraBtn;
+	Button setWallpaperBtn;
+	Bitmap bm;
+	
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_main);
+		
+		initialize();
+		
+	}
+
+	private void initialize() {
+		picture= (ImageView) findViewById(R.id.imageView1);
+		cameraBtn= (Button) findViewById(R.id.button1);
+		setWallpaperBtn= (Button) findViewById(R.id.button2);
+		cameraBtn.setOnClickListener(this);
+		setWallpaperBtn.setOnClickListener(this);
+	}
+
+	@Override
+	public void onClick(View v) {
+		
+		if (v.getId()==R.id.button1) {
+			Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+			startActivityForResult(cameraIntent, 0);
+		}
+		if (v.getId()==R.id.button2) {
+			try {
+				getApplication().setWallpaper(bm);
+			} catch (IOException e) {
+				
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		bm = (Bitmap) data.getExtras().get("data");
+		picture.setImageBitmap(bm);
+	}
+	
+}
